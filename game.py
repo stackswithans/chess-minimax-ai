@@ -1,7 +1,20 @@
 import sys
 import pygame
 from pygame.locals import QUIT
-from board import draw_board
+from board import Board
+
+
+
+#TODOS:
+'''
+1 - Make a board ***
+2 - Add pieces to the board
+3 - Allow player input  
+4 - Show valid moves on the board
+5 - Disallow invalid moves
+6 - Implement minimax
+'''
+
 
 pygame.init()
 
@@ -14,9 +27,14 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Hello world")
 
 def main():
+    square_size = 100
+    board = Board(
+        square_size,
+        ((SCREEN_WIDTH - (square_size * 5)) / 2, 0) 
+    ) 
     while True:
         SCREEN.fill(BG_COLOR)
-        draw_board(SCREEN, SCREEN_WIDTH)
+        board.draw(SCREEN)
 
         for event in pygame.event.get():
             if event.type == QUIT:
