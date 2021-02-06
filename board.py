@@ -30,7 +30,7 @@ def get_point_from_square(board, row, col):
 #the screen
 def get_square_from_point(board, x, y):
     square_size = board.square_size
-    board_size = square_size * 5
+    board_size = 5
     for r in range(board_size):
         for c in range(board_size):
             grid_x, grid_y = get_point_from_square(board, r, c)

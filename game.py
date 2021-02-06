@@ -52,9 +52,14 @@ def main():
                 sys.exit()
 
             if event.type == MOUSEBUTTONDOWN:
-                selected_piece = get_square_from_point(
+                pos = get_square_from_point(
                     board, *event.pos
                 )
+                if pos is not None:
+                    if board.board[pos[0]][pos[1]] is not None:
+                        selected_piece = pos
+                    continue
+                selected_piece = None
 
         if selected_piece is not None:
             pygame.draw.circle(
