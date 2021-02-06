@@ -10,6 +10,14 @@ def convert_coordinates(board, row, col):
         board.pos[1] + (board.square_size * row)
     )
 
+def get_square_center(board, row, col):
+    x, y = convert_coordinates(board, row, col)
+
+    return (
+        (x + board.square_size / 2), 
+        (y + board.square_size / 2)  
+    )
+
 
 class Board: 
 
@@ -25,6 +33,30 @@ class Board:
 
     #Adds pieces to the board
     def initialize(self):
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
+        self.board[1][1] = piece.B_KING
         self.board[1][1] = piece.B_KING
 
     def draw(self, screen):
@@ -45,14 +77,19 @@ class Board:
                     square_x = square_x + square_size
             square_y = square_y + square_size 
             square_x = self.pos[0]
+        center = get_square_center(self, 0 , 0)
 
+        #Draw pieces
         piece_size = 60
         for r, row in enumerate(self.board):
             for c, piece in enumerate(row):
                 if piece is not None:
-                    pos_x, pos_y = convert_coordinates(self, r, c)
+                    pos_x, pos_y = get_square_center(self, r, c)
                     screen.blit(
                         piece, 
-                        (pos_x , pos_y)
+                        (
+                            pos_x - piece_size / 2 , 
+                            pos_y - piece_size / 2,
+                        )
                     ) 
 
