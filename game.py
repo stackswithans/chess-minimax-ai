@@ -6,7 +6,7 @@ from pygame.locals import (
 )
 from board import (
     Board, get_square_from_point,
-    get_square_center
+    get_square_center, get_legal_moves
 )
 
 
@@ -31,6 +31,26 @@ BG_COLOR = (0, 0, 0)
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chess minimax")
+
+def draw_user_guides(board, selected_piece, available_moves):
+    #Draw circle guides that will help the user move and know
+    #which piece is selected
+    print(selected_piece)
+    pygame.draw.circle(
+        SCREEN,
+        (0, 0, 0),
+        get_square_center(board, *selected_piece),
+        40,
+        width = 4
+    )
+
+    for move in available_moves:
+        pygame.draw.circle(
+            SCREEN,
+            (0, 0, 0),
+            get_square_center(board, *move),
+            3,
+        )
 
 def main():
     square_size = 80
@@ -58,10 +78,9 @@ def main():
                     board, *event.pos
                 )
 
-
         #Process click event
         if pos is not None:
-            board_piece = board.board[pos[0]][pos[1]]
+            board_piece = board.get_piece(pos)
             if board_piece:
                 selected_piece = pos
             else:
@@ -72,25 +91,16 @@ def main():
         else:
             selected_piece = None
 
-        #Draw circle if a piece was selected
-        if selected_piece is not None:
-            pygame.draw.circle(
-                SCREEN,
-                (0, 0, 0),
-                get_square_center(board, *selected_piece),
-                40,
-                width = 4
-            )
+        if selected_piece:
+            available_moves = get_legal_moves(board, selected_piece)
+            draw_user_guides(board, selected_piece, available_moves)
 
         #Process a player move
         if player_moved:
-            board.board[pos[0]][pos[1]] = \
-                board.board[selected_piece[0]][selected_piece[1]]
-            board.board[selected_piece[0]][selected_piece[1]] = None
+            board.change_piece_pos(selected_piece, pos)
             player_moved = False
             selected_piece = None
             pos = None
-
 
 
         pygame.display.update()

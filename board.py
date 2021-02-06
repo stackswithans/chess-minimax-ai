@@ -20,7 +20,7 @@ from piece import (
 
 #Converts board coordinates like (0,0) to screen coordinates of
 #The corresponding square (top-left)
-def get_point_from_square(board, row, col):
+def get_point_from_square(board, col, row):
     return (
         board.pos[0] + (board.square_size * col), 
         board.pos[1] + (board.square_size * row)
@@ -33,16 +33,16 @@ def get_square_from_point(board, x, y):
     board_size = 5
     for r in range(board_size):
         for c in range(board_size):
-            grid_x, grid_y = get_point_from_square(board, r, c)
+            grid_x, grid_y = get_point_from_square(board, c, r)
             square = pygame.Rect(
                 grid_x, grid_y, square_size, square_size
             )
             if square.collidepoint(x, y):
-                return (r, c)
+                return (c, r)
     return None
 
-def get_square_center(board, row, col):
-    x, y = get_point_from_square(board, row, col)
+def get_square_center(board, col, row):
+    x, y = get_point_from_square(board, col, row)
     return (
         (x + board.square_size / 2), 
         (y + board.square_size / 2)  
@@ -89,7 +89,7 @@ class Board:
                 piece_obj = Piece(
                     PieceType.PAWN, 
                     loader(filepath),
-                    Piece.WHITE if r == 1 else Piece.BLACK
+                    Piece.BLACK if r == 1 else Piece.WHITE
                 )
                 self.board[r][c] = piece_obj
                 continue
@@ -97,6 +97,26 @@ class Board:
             piece_obj = Piece(piece, image, color)
             self.board[r][c] = piece_obj
             next_piece += 1
+
+    def change_piece_pos(self, old_pos, new_pos):
+        x, y = old_pos
+        x1, y1 = new_pos
+        self.board[y1][x1] = self.board[y][x]
+        self.board[y][x] = None
+
+    def get_piece(self, square):
+        x, y = square
+        #HACK: returns false on out of bounds move
+        if x > 4 or y > 4:
+            return None
+        return self.board[y][x]
+
+    def is_square_free(self, square):
+        x, y = square
+        #HACK: returns false on out of bounds move
+        if x > 4 or y > 4:
+            return False
+        return self.board[y][x] is None
 
     def draw(self, screen):
         square_size = self.square_size
@@ -123,7 +143,7 @@ class Board:
         for r, row in enumerate(self.board):
             for c, piece in enumerate(row):
                 if piece is not None:
-                    pos_x, pos_y = get_square_center(self, r, c)
+                    pos_x, pos_y = get_square_center(self, c, r)
                     screen.blit(
                         piece.image, 
                         (
@@ -132,3 +152,21 @@ class Board:
                         )
                     ) 
 
+def get_legal_moves(board, square):
+    moves = []
+    #Get all valid moves for the selected piece
+    pos_x, pos_y = square
+    piece = board.get_piece(square)
+
+    ptype = piece.ptype
+    if ptype == PieceType.PAWN:
+        is_black = piece.color == Piece.BLACK
+        straight_move = (pos_x, pos_y + 1) if is_black \
+            else (pos_x, pos_y - 1)
+        #Check for move by one square
+        print("This is the straight_move: ", straight_move)
+        if board.is_square_free(straight_move):
+            print("adding move" )
+            moves.append(straight_move)
+
+    return moves
