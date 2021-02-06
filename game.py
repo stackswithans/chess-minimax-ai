@@ -43,6 +43,7 @@ def main():
     ) 
     pos = None
     selected_piece = None
+    player_moved = False
     while True:
         SCREEN.fill(BG_COLOR)
         board.draw(SCREEN)
@@ -57,14 +58,21 @@ def main():
                     board, *event.pos
                 )
 
+
+        #Process click event
         if pos is not None:
-            if board.board[pos[0]][pos[1]] is not None:
+            board_piece = board.board[pos[0]][pos[1]]
+            if board_piece:
                 selected_piece = pos
             else:
-                selected_piece = None
+                if selected_piece:
+                    player_moved = True
+                else: 
+                    selected_piece = None
         else:
             selected_piece = None
 
+        #Draw circle if a piece was selected
         if selected_piece is not None:
             pygame.draw.circle(
                 SCREEN,
@@ -73,6 +81,17 @@ def main():
                 40,
                 width = 4
             )
+
+        #Process a player move
+        if player_moved:
+            board.board[pos[0]][pos[1]] = \
+                board.board[selected_piece[0]][selected_piece[1]]
+            board.board[selected_piece[0]][selected_piece[1]] = None
+            player_moved = False
+            selected_piece = None
+            pos = None
+
+
 
         pygame.display.update()
 
