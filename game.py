@@ -27,15 +27,15 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Hello world")
 
 def main():
-    square_size = 100
+    square_size = 80
     board = Board(
         square_size,
         ((SCREEN_WIDTH - (square_size * 5)) / 2, 0) 
     ) 
     while True:
         SCREEN.fill(BG_COLOR)
-        board.draw(SCREEN)
 
+        board.draw(SCREEN)
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
