@@ -1,6 +1,22 @@
 import sys
 import pygame
-import piece
+import itertools
+from piece import (
+    B_KING,
+    B_QUEEN,
+    B_ROOK,
+    B_BISHOP,
+    B_KNIGHT, 
+    B_PAWN,
+    W_KING,
+    W_QUEEN,
+    W_ROOK,
+    W_BISHOP,
+    W_KNIGHT, 
+    W_PAWN,
+    PieceType,
+    Piece
+)
 
 #Converts board coordinates like (0,0) to screen coordinates of
 #The corresponding square (top-left)
@@ -33,31 +49,41 @@ class Board:
 
     #Adds pieces to the board
     def initialize(self):
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
-        self.board[1][1] = piece.B_KING
+        pieces = [
+            #Black pieces
+            (PieceType.ROOK, B_ROOK, Piece.BLACK),
+            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
+            (PieceType.KING, B_KING, Piece.BLACK),
+            #White pieces
+            (PieceType.ROOK, W_ROOK, Piece.WHITE),
+            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            (PieceType.KING, W_KING, Piece.WHITE),
+
+        ]
+        #Add pieces
+        next_piece = 0
+        #This was done just to make the code look prettier
+        for r, c  in itertools.product(range(5), range(5)):
+            if r == 2:
+                continue
+            # Adds pawn rows
+            if r == 1 or r ==3:
+                loader, filepath = B_PAWN if r == 1 else W_PAWN
+                piece_obj = Piece(
+                    PieceType.PAWN, 
+                    loader(filepath),
+                    Piece.WHITE if r == 1 else Piece.BLACK
+                )
+                self.board[r][c] = piece_obj
+                continue
+            piece, image, color = pieces[next_piece]
+            piece_obj = Piece(piece, image, color)
+            self.board[r][c] = piece_obj
+            next_piece += 1
 
     def draw(self, screen):
         square_size = self.square_size
@@ -86,7 +112,7 @@ class Board:
                 if piece is not None:
                     pos_x, pos_y = get_square_center(self, r, c)
                     screen.blit(
-                        piece, 
+                        piece.image, 
                         (
                             pos_x - piece_size / 2 , 
                             pos_y - piece_size / 2,
