@@ -41,6 +41,7 @@ def main():
             (SCREEN_HEIGHT - (square_size * 5)) / 2,
         ) 
     ) 
+    pos = None
     selected_piece = None
     while True:
         SCREEN.fill(BG_COLOR)
@@ -55,11 +56,14 @@ def main():
                 pos = get_square_from_point(
                     board, *event.pos
                 )
-                if pos is not None:
-                    if board.board[pos[0]][pos[1]] is not None:
-                        selected_piece = pos
-                    continue
+
+        if pos is not None:
+            if board.board[pos[0]][pos[1]] is not None:
+                selected_piece = pos
+            else:
                 selected_piece = None
+        else:
+            selected_piece = None
 
         if selected_piece is not None:
             pygame.draw.circle(
