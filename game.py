@@ -35,10 +35,10 @@ pygame.display.set_caption("Chess minimax")
 def draw_user_guides(board, selected_piece, available_moves):
     #Draw circle guides that will help the user move and know
     #which piece is selected
-    print(selected_piece)
+    CIRCLE_COLOR = (50, 155, 168)
     pygame.draw.circle(
         SCREEN,
-        (0, 0, 0),
+        CIRCLE_COLOR,
         get_square_center(board, *selected_piece),
         40,
         width = 4
@@ -47,7 +47,7 @@ def draw_user_guides(board, selected_piece, available_moves):
     for move in available_moves:
         pygame.draw.circle(
             SCREEN,
-            (0, 0, 0),
+            CIRCLE_COLOR,
             get_square_center(board, *move),
             3,
         )

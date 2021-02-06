@@ -107,14 +107,14 @@ class Board:
     def get_piece(self, square):
         x, y = square
         #HACK: returns false on out of bounds move
-        if x > 4 or y > 4:
+        if (x > 4 or x < 0) or (y < 0 or y > 4):
             return None
         return self.board[y][x]
 
     def is_square_free(self, square):
         x, y = square
         #HACK: returns false on out of bounds move
-        if x > 4 or y > 4:
+        if (x > 4 or x < 0) or (y < 0 or y > 4):
             return False
         return self.board[y][x] is None
 
@@ -164,9 +164,20 @@ def get_legal_moves(board, square):
         straight_move = (pos_x, pos_y + 1) if is_black \
             else (pos_x, pos_y - 1)
         #Check for move by one square
-        print("This is the straight_move: ", straight_move)
         if board.is_square_free(straight_move):
-            print("adding move" )
             moves.append(straight_move)
+        # Check for diagonal moves
+        #First diag
+        diag_move = (pos_x + 1, pos_y + 1) if is_black \
+            else (pos_x - 1, pos_y - 1)
+        other_piece = board.get_piece(diag_move)
+        if other_piece and other_piece.color != piece.color:
+            moves.append(diag_move)
+        #Second diag
+        diag_move = (pos_x - 1, pos_y + 1) if is_black \
+            else (pos_x + 1, pos_y - 1)
+        other_piece = board.get_piece(diag_move)
+        if other_piece and other_piece.color != piece.color:
+            moves.append(diag_move)
 
     return moves
