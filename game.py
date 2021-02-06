@@ -1,17 +1,23 @@
 import sys
 import pygame
-from pygame.locals import QUIT
-from board import Board
+from pygame.locals import (
+    QUIT,
+    MOUSEBUTTONDOWN
+)
+from board import (
+    Board, get_square_from_point,
+    get_square_center
+)
 
 
 
 #TODOS:
 '''
 1 - Make a board ***
-2 - Add pieces to the board
+2 - Add pieces to the board ***
 3 - Allow player input  
-4 - Show valid moves on the board
-5 - Disallow invalid moves
+4 - Disallow invalid moves
+5 - Show valid moves on the board
 6 - Implement minimax
 '''
 
@@ -24,7 +30,7 @@ SCREEN_HEIGHT = 768
 BG_COLOR = (0, 0, 0)
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Hello world")
+pygame.display.set_caption("Chess minimax")
 
 def main():
     square_size = 80
@@ -35,16 +41,31 @@ def main():
             (SCREEN_HEIGHT - (square_size * 5)) / 2,
         ) 
     ) 
+    selected_piece = None
     while True:
         SCREEN.fill(BG_COLOR)
-
         board.draw(SCREEN)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        pygame.display.update()
 
+            if event.type == MOUSEBUTTONDOWN:
+                selected_piece = get_square_from_point(
+                    board, *event.pos
+                )
+
+        if selected_piece is not None:
+            pygame.draw.circle(
+                SCREEN,
+                (0, 0, 0),
+                get_square_center(board, *selected_piece),
+                40,
+                width = 4
+            )
+
+        pygame.display.update()
 
 if __name__ == "__main__":
     main()

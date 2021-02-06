@@ -20,15 +20,29 @@ from piece import (
 
 #Converts board coordinates like (0,0) to screen coordinates of
 #The corresponding square (top-left)
-def convert_coordinates(board, row, col):
+def get_point_from_square(board, row, col):
     return (
         board.pos[0] + (board.square_size * col), 
         board.pos[1] + (board.square_size * row)
     )
 
-def get_square_center(board, row, col):
-    x, y = convert_coordinates(board, row, col)
+#Gets the coordinate of a square on the board based on a point in
+#the screen
+def get_square_from_point(board, x, y):
+    square_size = board.square_size
+    board_size = square_size * 5
+    for r in range(board_size):
+        for c in range(board_size):
+            grid_x, grid_y = get_point_from_square(board, r, c)
+            square = pygame.Rect(
+                grid_x, grid_y, square_size, square_size
+            )
+            if square.collidepoint(x, y):
+                return (r, c)
+    return None
 
+def get_square_center(board, row, col):
+    x, y = get_point_from_square(board, row, col)
     return (
         (x + board.square_size / 2), 
         (y + board.square_size / 2)  
@@ -36,7 +50,6 @@ def get_square_center(board, row, col):
 
 
 class Board: 
-
     def __init__(self, square_size, pos):
         self.pos = pos # Coordinate of top-left corner of the board 
         self.square_size = square_size
