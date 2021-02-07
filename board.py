@@ -168,16 +168,14 @@ def get_legal_moves(board, square):
             moves.append(straight_move)
         # Check for diagonal moves
         #First diag
-        diag_move = (pos_x + 1, pos_y + 1) if is_black \
+        diag_move_1 = (pos_x + 1, pos_y + 1) if is_black \
             else (pos_x - 1, pos_y - 1)
-        other_piece = board.get_piece(diag_move)
-        if other_piece and other_piece.color != piece.color:
-            moves.append(diag_move)
         #Second diag
-        diag_move = (pos_x - 1, pos_y + 1) if is_black \
+        diag_move_2 = (pos_x - 1, pos_y + 1) if is_black \
             else (pos_x + 1, pos_y - 1)
-        other_piece = board.get_piece(diag_move)
-        if other_piece and other_piece.color != piece.color:
-            moves.append(diag_move)
+        for move in (diag_move_1, diag_move_2):
+            other_piece = board.get_piece(move)
+            if other_piece and other_piece.color != piece.color:
+                moves.append(move)
 
     return moves
