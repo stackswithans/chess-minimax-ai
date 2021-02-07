@@ -65,16 +65,16 @@ class Board:
         pieces = [
             #Black pieces
             #(PieceType.ROOK, B_ROOK, Piece.BLACK),
-            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
             #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
             #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
-            #(PieceType.KING, B_KING, Piece.BLACK),
+            (PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
             #(PieceType.ROOK, W_ROOK, Piece.WHITE),
-            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
             #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
             #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
-            #(PieceType.KING, W_KING, Piece.WHITE),
+            (PieceType.KING, W_KING, Piece.WHITE),
 
         ]
         #Add pieces
@@ -247,6 +247,25 @@ def get_legal_moves(board, square):
             other_piece = board.get_piece(move)
             if move_is_capture(piece, other_piece):
                 moves.append(move)
+
+    if ptype == PieceType.KING:
+        col, row = square
+        king_moves = (
+            (col, row + 1),
+            (col, row - 1),
+            (col - 1, row),
+            (col + 1, row),
+            (col - 1, row - 1),
+            (col + 1, row - 1),
+            (col - 1, row + 1),
+            (col + 1, row + 1),
+        )
+
+        for king_move in king_moves:
+            square_free = board.is_square_free(king_move)
+            other_piece = board.get_piece(king_move)
+            if square_free or move_is_capture(piece, other_piece):
+                moves.append(king_move)
 
     if ptype == PieceType.ROOK:
         return get_hv_moves(board, square)
