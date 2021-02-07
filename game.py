@@ -25,8 +25,9 @@ from board import (
 5 - Show valid moves on the board **
 6 - Allow piece captures **
 7 - Checks for potential checks before moves **
-- Implement turn changes
-- Implement Checkmate
+- Implement turn changes **
+- Implement Checkmate **
+- Implement Stalemate
 - Implement promotion ??
 - Implement Casteling ??
 ? - Implement minimax
