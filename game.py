@@ -15,7 +15,7 @@ from board import (
 '''
 1 - Make a board ***
 2 - Add pieces to the board ***
-3 - Allow player input  
+3 - Allow player input  ***
 4 - Disallow invalid moves
 5 - Show valid moves on the board
 6 - Implement minimax
@@ -97,11 +97,11 @@ def main():
 
         #Process a player move
         if player_moved:
-            board.change_piece_pos(selected_piece, pos)
+            if pos in available_moves:
+                board.change_piece_pos(selected_piece, pos)
             player_moved = False
             selected_piece = None
             pos = None
-
 
         pygame.display.update()
 

@@ -64,16 +64,16 @@ class Board:
     def initialize(self):
         pieces = [
             #Black pieces
-            #(PieceType.ROOK, B_ROOK, Piece.BLACK),
-            #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
-            #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
-            #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
+            (PieceType.ROOK, B_ROOK, Piece.BLACK),
+            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
             (PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
-            #(PieceType.ROOK, W_ROOK, Piece.WHITE),
-            #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
-            #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
-            #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            (PieceType.ROOK, W_ROOK, Piece.WHITE),
+            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
             (PieceType.KING, W_KING, Piece.WHITE),
 
         ]
@@ -93,11 +93,7 @@ class Board:
                 )
                 self.board[r][c] = piece_obj
                 continue
-            try:
-                piece, image, color = pieces[next_piece]
-            except IndexError:
-                next_piece += 1
-                continue
+            piece, image, color = pieces[next_piece]
             piece_obj = Piece(piece, image, color)
             self.board[r][c] = piece_obj
             next_piece += 1
