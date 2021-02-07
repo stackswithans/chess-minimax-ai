@@ -66,14 +66,14 @@ class Board:
             #Black pieces
             #(PieceType.ROOK, B_ROOK, Piece.BLACK),
             #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
-            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
-            #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
+            #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
             #(PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
             #(PieceType.ROOK, W_ROOK, Piece.WHITE),
             #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
-            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
-            #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
             #(PieceType.KING, W_KING, Piece.WHITE),
 
         ]
@@ -253,5 +253,9 @@ def get_legal_moves(board, square):
 
     if ptype == PieceType.BISHOP:
         return get_diag_moves(board, square)
+
+    if ptype == PieceType.QUEEN:
+        return get_hv_moves(board, square) + \
+                get_diag_moves(board, square)
 
     return moves
