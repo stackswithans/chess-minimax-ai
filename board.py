@@ -170,24 +170,18 @@ def get_hv_moves(board, square):
     other_pieces = []
     #Get all vertical moves
     row = square[1]
-    r = row + 1
-    while board.is_square_free((square[0], r)):
-        moves.append((square[0], r))
-        r += 1
-    r = row - 1
-    while board.is_square_free((square[0], r)):
-        moves.append((square[0], r))
-        r -= 1
+    up_down = (row + 1, row - 1)
+    for r in up_down:
+        while board.is_square_free((square[0], r)):
+            moves.append((square[0], r))
+            r = r - 1 if r < row else r + 1
     #Get all horizontal moves
     col = square[0]
-    c = col + 1
-    while board.is_square_free((c, square[1])):
-        moves.append((c, square[1]))
-        c += 1
-    c = col - 1
-    while board.is_square_free((c, square[1])):
-        moves.append((c, square[1]))
-        c -= 1
+    left_right = (col + 1, col - 1)
+    for c in left_right:
+        while board.is_square_free((c, square[1])):
+            moves.append((c, square[1]))
+            c = c - 1 if c < col else c + 1
 
     return moves
 
