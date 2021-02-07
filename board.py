@@ -56,9 +56,12 @@ class Board:
         self.board =[
             [None for i in range(5)] for x in range(5)
         ] 
+        self.checkmate = {
+            Piece.WHITE : False,
+            Piece.BLACK : False
+        }
         self.white_in_check = False
         self.black_in_check = False
-        self.chekmate = False
         self.initialize()
 
     #Adds pieces to the board
@@ -66,15 +69,15 @@ class Board:
         pieces = [
             #Black pieces
             (PieceType.ROOK, B_ROOK, Piece.BLACK),
-            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
-            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
             (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
             (PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
-            (PieceType.ROOK, W_ROOK, Piece.WHITE),
-            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
-            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
-            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            #(PieceType.ROOK, W_ROOK, Piece.WHITE),
+            #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
             (PieceType.KING, W_KING, Piece.WHITE),
 
         ]
@@ -86,6 +89,7 @@ class Board:
                 continue
             # Adds pawn rows
             if r == 1 or r ==3:
+                continue
                 loader, filepath = B_PAWN if r == 1 else W_PAWN
                 piece_obj = Piece(
                     PieceType.PAWN, 
@@ -94,7 +98,11 @@ class Board:
                 )
                 self.board[r][c] = piece_obj
                 continue
-            piece, image, color = pieces[next_piece]
+            try:
+                piece, image, color = pieces[next_piece]
+            except IndexError:
+                next_piece += 1
+                continue
             piece_obj = Piece(piece, image, color)
             self.board[r][c] = piece_obj
             next_piece += 1
@@ -121,6 +129,22 @@ class Board:
             return True
         return False
 
+    def is_checkmate(self, color):
+        pieces = []
+        for r, row in enumerate(self.board):
+            for c, other_piece in enumerate(row):
+                pos = (c, r)
+                if other_piece and \
+                other_piece.color == color :
+                    pieces.append(pos)
+
+        for piece in pieces:
+            moves = get_legal_moves(self, piece)
+            moves = filter_legal_moves(self, piece, moves)
+            if len(moves):
+                return False
+        return True
+
 
     def move_piece(self, old_pos, new_pos):
         x, y = old_pos
@@ -129,10 +153,14 @@ class Board:
         self.board[y][x] = None
         #Check if move triggers check
         piece = self.get_piece(new_pos)
-        color = Piece.BLACK if piece.color == Piece.WHITE \
+        opponent = Piece.BLACK if piece.color == Piece.WHITE \
             else Piece.WHITE
         self.black_in_check = self.color_in_check(Piece.BLACK)
         self.white_in_check = self.color_in_check(Piece.WHITE)
+        if self.black_in_check and opponent == Piece.BLACK:
+            self.checkmate[Piece.BLACK] = self.is_checkmate(Piece.BLACK)
+        elif self.white_in_check and opponent == Piece.WHITE:
+            self.checkmate[Piece.WHITE] = self.is_checkmate(Piece.WHITE)
 
 
     def get_piece(self, square):
@@ -334,5 +362,24 @@ def get_legal_moves(board, square):
             if square_free or move_is_capture(piece, other_piece):
                 moves.append(orth_move)
 
-
     return moves
+
+
+#Checks if a move puts king in check.
+#If it does, it isn't a legal move
+def filter_legal_moves(board, square, moves):
+    piece = board.get_piece(square)
+    color = piece.color
+    legal_moves = []
+    for move in moves:
+        x, y = square
+        x1, y1 = move
+        aux = board.get_piece(move)
+        board.board[y1][x1] = board.board[y][x]
+        board.board[y][x] = None
+        if not board.color_in_check(color):
+            legal_moves.append(move)
+        #Revert board
+        board.board[y1][x1] = aux
+        board.board[y][x] = piece
+    return legal_moves

@@ -10,7 +10,8 @@ from piece import (
 )
 from board import (
     Board, get_square_from_point,
-    get_square_center, get_legal_moves
+    get_square_center, get_legal_moves,
+    filter_legal_moves
 )
 
 
@@ -25,6 +26,7 @@ from board import (
 6 - Allow piece captures **
 7 - Checks for potential checks before moves **
 - Implement turn changes
+- Implement Checkmate
 - Implement promotion ??
 - Implement Casteling ??
 ? - Implement minimax
@@ -40,6 +42,15 @@ BG_COLOR = (0, 0, 0)
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Chess minimax")
+
+
+def show_end_screen(text, pos):
+    fontObj = pygame.font.Font('freesansbold.ttf', 32)
+    textSurfaceObj = fontObj.render(
+        text, True, (100, 200, 100), BG_COLOR
+    )
+    textRectObj = textSurfaceObj.get_rect()
+    textRectObj.center = pos
 
 def draw_user_guides(board, selected_piece, available_moves):
     #Draw circle guides that will help the user move and know
@@ -70,13 +81,26 @@ def main():
             (SCREEN_HEIGHT - (square_size * 5)) / 2,
         ) 
     ) 
+
+    #Player that's going to move next
+    next_move = Piece.WHITE  
+
+    #Postition of mouse clicks
     pos = None
+    #Board position of selected piece
     selected_piece = None
+    #Player moved piece
     player_moved = False
     while True:
         SCREEN.fill(BG_COLOR)
         board.draw(SCREEN)
-
+        #Check if player is mated
+        if board.checkmate.get(next_move):
+            print(f"{next_move} has lost")
+            show_end_screen(f"{next_move} has won", 
+               ( 200, 200 ), 
+            )
+            
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -91,37 +115,27 @@ def main():
         if pos is not None:
             if not selected_piece:
                 if not board.is_square_free(pos):
-                    selected_piece = pos
+                    piece = board.get_piece(pos)
+                    if piece.color == next_move: 
+                        selected_piece = pos
             else:
                 player_moved = True
 
 
         if selected_piece:
             available_moves = get_legal_moves(board, selected_piece)
-            #Check if a move puts king in check.
-            #If it does, it isn't a legal move
-            piece = board.get_piece(selected_piece)
-            color = piece.color
-            bad_moves = []
-            for move in available_moves:
-                x, y = selected_piece
-                x1, y1 = move
-                aux = board.get_piece(move)
-                board.board[y1][x1] = board.board[y][x]
-                board.board[y][x] = None
-                if board.color_in_check(color):
-                    bad_moves.append(move)
-                #Revert board
-                board.board[y1][x1] = aux
-                board.board[y][x] = piece
-            for move in bad_moves:
-                available_moves.remove(move)
+            available_moves = filter_legal_moves(
+                board, selected_piece, available_moves
+            )
             draw_user_guides(board, selected_piece, available_moves)
 
         #Process a player move
         if player_moved:
             if pos in available_moves:
                 board.move_piece(selected_piece, pos)
+                # Change turn
+                next_move = Piece.BLACK if next_move == Piece.WHITE\
+                    else Piece.WHITE
             player_moved = False
             selected_piece = None
 
