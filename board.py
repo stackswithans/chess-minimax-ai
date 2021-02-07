@@ -65,16 +65,16 @@ class Board:
         pieces = [
             #Black pieces
             (PieceType.ROOK, B_ROOK, Piece.BLACK),
-            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
-            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
-            (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
-            (PieceType.KING, B_KING, Piece.BLACK),
+            #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
+            #(PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
             (PieceType.ROOK, W_ROOK, Piece.WHITE),
-            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
-            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
-            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
-            (PieceType.KING, W_KING, Piece.WHITE),
+            #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            #(PieceType.KING, W_KING, Piece.WHITE),
 
         ]
         #Add pieces
@@ -93,7 +93,11 @@ class Board:
                 )
                 self.board[r][c] = piece_obj
                 continue
-            piece, image, color = pieces[next_piece]
+            try:
+                piece, image, color = pieces[next_piece]
+            except IndexError:
+                next_piece += 1
+                continue
             piece_obj = Piece(piece, image, color)
             self.board[r][c] = piece_obj
             next_piece += 1
@@ -152,6 +156,42 @@ class Board:
                         )
                     ) 
 
+
+def move_is_capture(piece, other_piece):
+    if other_piece and other_piece.color != piece.color:
+        return True
+    return False
+
+# Gets all horizontal and vertical moves for a piece
+# i.e rook or queen
+def get_hv_moves(board, square):
+    moves = []
+    piece = board.get_piece(square)
+    other_pieces = []
+    #Get all vertical moves
+    row = square[1]
+    r = row + 1
+    while board.is_square_free((square[0], r)):
+        moves.append((square[0], r))
+        r += 1
+    r = row - 1
+    while board.is_square_free((square[0], r)):
+        moves.append((square[0], r))
+        r -= 1
+    #Get all horizontal moves
+    col = square[0]
+    c = col + 1
+    while board.is_square_free((c, square[1])):
+        moves.append((c, square[1]))
+        c += 1
+    c = col - 1
+    while board.is_square_free((c, square[1])):
+        moves.append((c, square[1]))
+        c -= 1
+
+    return moves
+
+
 def get_legal_moves(board, square):
     moves = []
     #Get all valid moves for the selected piece
@@ -175,7 +215,10 @@ def get_legal_moves(board, square):
             else (pos_x + 1, pos_y - 1)
         for move in (diag_move_1, diag_move_2):
             other_piece = board.get_piece(move)
-            if other_piece and other_piece.color != piece.color:
+            if move_is_capture(piece, other_piece):
                 moves.append(move)
+
+    if ptype == PieceType.ROOK:
+        return get_hv_moves(board, square)
 
     return moves
