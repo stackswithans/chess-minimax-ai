@@ -102,7 +102,6 @@ def main():
                 board.change_piece_pos(selected_piece, pos)
             player_moved = False
             selected_piece = None
-            pos = None
 
         pos = None
         pygame.display.update()
