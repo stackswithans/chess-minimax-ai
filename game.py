@@ -102,11 +102,18 @@ def main():
     while True:
         SCREEN.fill(BG_COLOR)
         board.draw(SCREEN)
+
         #Check if player is mated
         if board.checkmate.get(next_move):
             winner = Piece.BLACK if next_move == Piece.WHITE\
                 else Piece.WHITE
             show_end_screen(f"{winner.capitalize()} has won.", 
+               ( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 
+            )
+        elif board.has_no_moves(next_move):
+        #Check if game ends in stalemate
+            show_end_screen(
+                f"No valid moves. Game ends in stalemate.", 
                ( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 
             )
             

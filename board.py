@@ -129,7 +129,7 @@ class Board:
             return True
         return False
 
-    def is_checkmate(self, color):
+    def has_no_moves(self, color):
         pieces = []
         for r, row in enumerate(self.board):
             for c, other_piece in enumerate(row):
@@ -158,9 +158,9 @@ class Board:
         self.black_in_check = self.color_in_check(Piece.BLACK)
         self.white_in_check = self.color_in_check(Piece.WHITE)
         if self.black_in_check and opponent == Piece.BLACK:
-            self.checkmate[Piece.BLACK] = self.is_checkmate(Piece.BLACK)
+            self.checkmate[Piece.BLACK] = self.has_no_moves(Piece.BLACK)
         elif self.white_in_check and opponent == Piece.WHITE:
-            self.checkmate[Piece.WHITE] = self.is_checkmate(Piece.WHITE)
+            self.checkmate[Piece.WHITE] = self.has_no_moves(Piece.WHITE)
 
 
     def get_piece(self, square):
