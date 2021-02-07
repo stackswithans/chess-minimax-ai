@@ -46,12 +46,19 @@ pygame.display.set_caption("Chess minimax")
 
 
 def show_end_screen(text, pos):
-    fontObj = pygame.font.Font('freesansbold.ttf', 32)
+    screen = SCREEN.convert_alpha()
+    pygame.draw.rect(
+        screen, (255, 255, 255, 100 ), 
+        (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+    )
+    fontObj = pygame.font.Font('./res/roboto_slab.ttf', 32)
     textSurfaceObj = fontObj.render(
-        text, True, (100, 200, 100), BG_COLOR
+        text, True, (0, 0, 0)
     )
     textRectObj = textSurfaceObj.get_rect()
     textRectObj.center = pos
+    screen.blit(textSurfaceObj, textRectObj)
+    SCREEN.blit(screen, (0, 0))
 
 def draw_user_guides(board, selected_piece, available_moves):
     #Draw circle guides that will help the user move and know
@@ -97,9 +104,10 @@ def main():
         board.draw(SCREEN)
         #Check if player is mated
         if board.checkmate.get(next_move):
-            print(f"{next_move} has lost")
-            show_end_screen(f"{next_move} has won", 
-               ( 200, 200 ), 
+            winner = Piece.BLACK if next_move == Piece.WHITE\
+                else Piece.WHITE
+            show_end_screen(f"{winner.capitalize()} has won.", 
+               ( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 
             )
             
         for event in pygame.event.get():
