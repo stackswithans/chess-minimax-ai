@@ -65,15 +65,15 @@ class Board:
         pieces = [
             #Black pieces
             #(PieceType.ROOK, B_ROOK, Piece.BLACK),
-            #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
+            (PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
             #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
-            (PieceType.QUEEN, B_QUEEN, Piece.BLACK),
+            #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
             #(PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
             #(PieceType.ROOK, W_ROOK, Piece.WHITE),
-            #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
+            (PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
             #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
-            (PieceType.QUEEN, W_QUEEN, Piece.WHITE),
+            #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
             #(PieceType.KING, W_KING, Piece.WHITE),
 
         ]
@@ -257,5 +257,23 @@ def get_legal_moves(board, square):
     if ptype == PieceType.QUEEN:
         return get_hv_moves(board, square) + \
                 get_diag_moves(board, square)
+
+    if ptype == PieceType.KNIGHT:
+        col, row  = square
+        orth_moves = (
+            (col + 1, row + 2),
+            (col - 1, row + 2),
+            (col - 1, row - 2),
+            (col + 1, row - 2),
+            (col - 2, row + 1),
+            (col + 2, row + 1),
+            (col - 2, row - 1),
+            (col + 2, row - 1),
+        )
+        for orth_move in orth_moves:
+            square_free = board.is_square_free(orth_move)
+            other_piece = board.get_piece(orth_move)
+            if square_free or move_is_capture(piece, other_piece):
+                moves.append(orth_move)
 
     return moves
