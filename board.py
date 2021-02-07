@@ -109,10 +109,6 @@ class Board:
     def color_in_check(self, color):
         king_pos = self.get_pos_by_ptype(PieceType.KING, color)
 
-        if color == Piece.WHITE:
-            self.white_in_check = False
-        else:
-            self.black_in_check = False
         attackers = [] 
         for r, row in enumerate(self.board):
             for c, other_piece in enumerate(row):
@@ -121,12 +117,9 @@ class Board:
                 other_piece.color != color and \
                 king_pos in get_legal_moves(self, pos):
                     attackers.append(pos)
-
         if len(attackers):
-            if color == Piece.BLACK:
-                self.black_in_check = True
-            else:
-                self.white_in_check = True
+            return True
+        return False
 
 
     def move_piece(self, old_pos, new_pos):
@@ -138,8 +131,8 @@ class Board:
         piece = self.get_piece(new_pos)
         color = Piece.BLACK if piece.color == Piece.WHITE \
             else Piece.WHITE
-        self.color_in_check(Piece.BLACK)
-        self.color_in_check(Piece.WHITE)
+        self.black_in_check = self.color_in_check(Piece.BLACK)
+        self.white_in_check = self.color_in_check(Piece.WHITE)
 
 
     def get_piece(self, square):
@@ -294,7 +287,7 @@ def get_legal_moves(board, square):
             if move_is_capture(piece, other_piece):
                 moves.append(move)
 
-    if ptype == PieceType.KING:
+    elif ptype == PieceType.KING:
         col, row = square
         king_moves = (
             (col, row + 1),
@@ -313,17 +306,17 @@ def get_legal_moves(board, square):
             if square_free or move_is_capture(piece, other_piece):
                 moves.append(king_move)
 
-    if ptype == PieceType.ROOK:
-        return get_hv_moves(board, square)
+    elif ptype == PieceType.ROOK:
+        moves = get_hv_moves(board, square)
 
-    if ptype == PieceType.BISHOP:
-        return get_diag_moves(board, square)
+    elif ptype == PieceType.BISHOP:
+        moves = get_diag_moves(board, square)
 
-    if ptype == PieceType.QUEEN:
-        return get_hv_moves(board, square) + \
+    elif ptype == PieceType.QUEEN:
+        moves = get_hv_moves(board, square) + \
                 get_diag_moves(board, square)
 
-    if ptype == PieceType.KNIGHT:
+    elif ptype == PieceType.KNIGHT:
         col, row  = square
         orth_moves = (
             (col + 1, row + 2),
@@ -340,5 +333,6 @@ def get_legal_moves(board, square):
             other_piece = board.get_piece(orth_move)
             if square_free or move_is_capture(piece, other_piece):
                 moves.append(orth_move)
+
 
     return moves

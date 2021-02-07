@@ -23,7 +23,7 @@ from board import (
 4 - Disallow invalid moves **
 5 - Show valid moves on the board **
 6 - Allow piece captures **
-7 - Checks for potential checks before moves
+7 - Checks for potential checks before moves **
 - Implement turn changes
 - Implement promotion ??
 - Implement Casteling ??
@@ -98,6 +98,24 @@ def main():
 
         if selected_piece:
             available_moves = get_legal_moves(board, selected_piece)
+            #Check if a move puts king in check.
+            #If it does, it isn't a legal move
+            piece = board.get_piece(selected_piece)
+            color = piece.color
+            bad_moves = []
+            for move in available_moves:
+                x, y = selected_piece
+                x1, y1 = move
+                aux = board.get_piece(move)
+                board.board[y1][x1] = board.board[y][x]
+                board.board[y][x] = None
+                if board.color_in_check(color):
+                    bad_moves.append(move)
+                #Revert board
+                board.board[y1][x1] = aux
+                board.board[y][x] = piece
+            for move in bad_moves:
+                available_moves.remove(move)
             draw_user_guides(board, selected_piece, available_moves)
 
         #Process a player move
