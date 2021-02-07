@@ -56,7 +56,8 @@ class Board:
         self.board =[
             [None for i in range(5)] for x in range(5)
         ] 
-        self.check = False
+        self.white_in_check = False
+        self.black_in_check = False
         self.chekmate = False
         self.initialize()
 
@@ -98,11 +99,48 @@ class Board:
             self.board[r][c] = piece_obj
             next_piece += 1
 
-    def change_piece_pos(self, old_pos, new_pos):
+    def get_pos_by_ptype(self, ptype, color):
+        for r, row in enumerate(self.board):
+            for c, piece in enumerate(row):
+                if piece and piece.ptype == ptype and piece.color == color:
+                    return (c, r)
+        return None
+
+    def color_in_check(self, color):
+        king_pos = self.get_pos_by_ptype(PieceType.KING, color)
+
+        if color == Piece.WHITE:
+            self.white_in_check = False
+        else:
+            self.black_in_check = False
+        attackers = [] 
+        for r, row in enumerate(self.board):
+            for c, other_piece in enumerate(row):
+                pos = (c, r)
+                if other_piece and \
+                other_piece.color != color and \
+                king_pos in get_legal_moves(self, pos):
+                    attackers.append(pos)
+
+        if len(attackers):
+            if color == Piece.BLACK:
+                self.black_in_check = True
+            else:
+                self.white_in_check = True
+
+
+    def move_piece(self, old_pos, new_pos):
         x, y = old_pos
         x1, y1 = new_pos
         self.board[y1][x1] = self.board[y][x]
         self.board[y][x] = None
+        #Check if move triggers check
+        piece = self.get_piece(new_pos)
+        color = Piece.BLACK if piece.color == Piece.WHITE \
+            else Piece.WHITE
+        self.color_in_check(Piece.BLACK)
+        self.color_in_check(Piece.WHITE)
+
 
     def get_piece(self, square):
         x, y = square
@@ -137,6 +175,18 @@ class Board:
             square_y = square_y + square_size 
             square_x = self.pos[0]
         center = get_square_center(self, 0 , 0)
+
+        #Paint king square red if in check
+        if self.white_in_check or self.black_in_check:
+            square_color = (212, 40, 21)
+            color = Piece.WHITE if self.white_in_check\
+                else Piece.BLACK
+            king_pos = self.get_pos_by_ptype(PieceType.KING, color)
+            x, y = get_point_from_square(self, *king_pos)
+            pygame.draw.rect(
+                screen, square_color, 
+                (x, y, square_size, square_size)
+            )
 
         #Draw pieces
         piece_size = 60

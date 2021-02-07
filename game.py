@@ -4,6 +4,10 @@ from pygame.locals import (
     QUIT,
     MOUSEBUTTONDOWN
 )
+from piece import (
+    Piece,
+    PieceType,
+)
 from board import (
     Board, get_square_from_point,
     get_square_center, get_legal_moves
@@ -99,7 +103,7 @@ def main():
         #Process a player move
         if player_moved:
             if pos in available_moves:
-                board.change_piece_pos(selected_piece, pos)
+                board.move_piece(selected_piece, pos)
             player_moved = False
             selected_piece = None
 
