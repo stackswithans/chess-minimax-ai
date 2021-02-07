@@ -64,15 +64,15 @@ class Board:
     def initialize(self):
         pieces = [
             #Black pieces
-            (PieceType.ROOK, B_ROOK, Piece.BLACK),
+            #(PieceType.ROOK, B_ROOK, Piece.BLACK),
             #(PieceType.KNIGHT, B_KNIGHT, Piece.BLACK),
-            #(PieceType.BISHOP, B_BISHOP, Piece.BLACK),
+            (PieceType.BISHOP, B_BISHOP, Piece.BLACK),
             #(PieceType.QUEEN, B_QUEEN, Piece.BLACK),
             #(PieceType.KING, B_KING, Piece.BLACK),
             #White pieces
-            (PieceType.ROOK, W_ROOK, Piece.WHITE),
+            #(PieceType.ROOK, W_ROOK, Piece.WHITE),
             #(PieceType.KNIGHT, W_KNIGHT, Piece.WHITE),
-            #(PieceType.BISHOP, W_BISHOP, Piece.WHITE),
+            (PieceType.BISHOP, W_BISHOP, Piece.WHITE),
             #(PieceType.QUEEN, W_QUEEN, Piece.WHITE),
             #(PieceType.KING, W_KING, Piece.WHITE),
 
@@ -167,7 +167,6 @@ def move_is_capture(piece, other_piece):
 def get_hv_moves(board, square):
     moves = []
     piece = board.get_piece(square)
-    other_pieces = []
     #Get all vertical moves
     row = square[1]
     up_down = (row + 1, row - 1)
@@ -190,6 +189,37 @@ def get_hv_moves(board, square):
             moves.append((c, square[1]))
 
     return moves
+
+def get_diag_moves(board, square):
+    moves = []
+    piece = board.get_piece(square)
+    #Get front diagonals
+    col = square[0]
+    row = square[1]
+    diag_1 = ((col - 1, row + 1), (col + 1, row + 1))
+    for diag in diag_1:
+        x, y = diag
+        while board.is_square_free((x, y)):
+            moves.append((x, y))
+            y += 1
+            x = x - 1 if x < col else x + 1
+        other_piece = board.get_piece((x, y))
+        if move_is_capture(piece, other_piece):
+            moves.append((x, y))
+    #Get all horizontal moves
+    diag_2 = ((col - 1, row - 1), (col + 1, row - 1))
+    for diag in diag_2:
+        x, y = diag
+        while board.is_square_free((x, y)):
+            moves.append((x, y))
+            y -= 1
+            x = x - 1 if x < col else x + 1
+        other_piece = board.get_piece((x, y))
+        if move_is_capture(piece, other_piece):
+            moves.append((x, y))
+
+    return moves
+
 
 
 def get_legal_moves(board, square):
@@ -220,5 +250,8 @@ def get_legal_moves(board, square):
 
     if ptype == PieceType.ROOK:
         return get_hv_moves(board, square)
+
+    if ptype == PieceType.BISHOP:
+        return get_diag_moves(board, square)
 
     return moves
