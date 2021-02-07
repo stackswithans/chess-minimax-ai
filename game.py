@@ -27,7 +27,7 @@ from board import (
 7 - Checks for potential checks before moves **
 - Implement turn changes **
 - Implement Checkmate **
-- Implement Stalemate
+- Implement Stalemate **
 - Implement promotion ??
 - Implement Casteling ??
 ? - Implement minimax
