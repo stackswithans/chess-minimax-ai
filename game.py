@@ -16,9 +16,14 @@ from board import (
 1 - Make a board ***
 2 - Add pieces to the board ***
 3 - Allow player input  ***
-4 - Disallow invalid moves
-5 - Show valid moves on the board
-6 - Implement minimax
+4 - Disallow invalid moves **
+5 - Show valid moves on the board **
+6 - Allow piece captures **
+7 - Checks for potential checks before moves
+- Implement turn changes
+- Implement promotion ??
+- Implement Casteling ??
+? - Implement minimax
 '''
 
 
@@ -80,16 +85,12 @@ def main():
 
         #Process click event
         if pos is not None:
-            board_piece = board.get_piece(pos)
-            if board_piece:
-                selected_piece = pos
+            if not selected_piece:
+                if not board.is_square_free(pos):
+                    selected_piece = pos
             else:
-                if selected_piece:
-                    player_moved = True
-                else: 
-                    selected_piece = None
-        else:
-            selected_piece = None
+                player_moved = True
+
 
         if selected_piece:
             available_moves = get_legal_moves(board, selected_piece)
@@ -103,6 +104,7 @@ def main():
             selected_piece = None
             pos = None
 
+        pos = None
         pygame.display.update()
 
 if __name__ == "__main__":
