@@ -23,7 +23,10 @@ def calculate_material(board, pieces):
 
 #Calculates the optimal move for the 'bot'
 #using minimax
-def minimax(board, maximizing=True, depth=0, max_depth=3):
+def minimax(
+        board, maximizing=True, alpha=float("-inf"), 
+        beta=float("inf"), depth=0, max_depth=4
+    ):
     color = Piece.BLACK if maximizing else Piece.WHITE
 
     pieces = board.get_pieces_by_color(color)
@@ -59,7 +62,9 @@ def minimax(board, maximizing=True, depth=0, max_depth=3):
             board.board[y1][x1] = board.board[y][x]
             board.board[y][x] = None
             value = minimax(
-                board, not maximizing, depth + 1, max_depth
+                board, not maximizing,
+                alpha, beta, 
+                depth + 1, max_depth
             ) #Not my turn
             #Revert board
             board.board[y1][x1] = aux
@@ -67,6 +72,15 @@ def minimax(board, maximizing=True, depth=0, max_depth=3):
             if depth == 0:
                 values.append((value, (piece, move)))
             else:
+                if maximizing:
+                    alpha = max([alpha, value])
+                    if alpha >= beta: 
+                        return alpha
+                else:
+                    beta = min([beta, value])
+                    if beta < alpha:
+                        return beta
+
                 values.append(value)
 
     #Return a move if we are at the root of the search tree

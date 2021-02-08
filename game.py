@@ -30,9 +30,11 @@ from minimax import minimax
 - Implement turn changes **
 - Implement Checkmate **
 - Implement Stalemate **
+- Implement minimax **
+- Use a better cutoff test
+- Implement alpha_beta pruning 
 - Implement promotion ??
 - Implement Casteling ??
-? - Implement minimax
 '''
 
 
