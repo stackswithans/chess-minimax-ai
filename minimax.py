@@ -102,11 +102,11 @@ def minimax(
                 chosen_op = (value, (piece, move))
         else:
             if maximizing:
-                alpha = max([alpha, max_min_value])
+                alpha = max([alpha, value])
                 if alpha >= beta: 
                     break
             else:
-                beta = min([beta, max_min_value])
+                beta = min([beta, value])
                 if beta <= alpha:
                     break
 
