@@ -72,15 +72,6 @@ def minimax(
             if depth == 0:
                 values.append((value, (piece, move)))
             else:
-                if maximizing:
-                    alpha = max([alpha, value])
-                    if alpha >= beta: 
-                        return alpha
-                else:
-                    beta = min([beta, value])
-                    if beta < alpha:
-                        return beta
-
                 values.append(value)
 
     #Return a move if we are at the root of the search tree
