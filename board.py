@@ -123,8 +123,8 @@ class Board:
         if len(attackers):
             return True
         return False
-
-    def has_no_moves(self, color):
+    
+    def get_pieces_by_color(self, color):
         pieces = []
         for r, row in enumerate(self.board):
             for c, other_piece in enumerate(row):
@@ -132,6 +132,10 @@ class Board:
                 if other_piece and \
                 other_piece.color == color :
                     pieces.append(pos)
+        return pieces
+
+    def has_no_moves(self, color):
+        pieces = self.get_pieces_by_color(color)
 
         for piece in pieces:
             moves = get_legal_moves(self, piece)

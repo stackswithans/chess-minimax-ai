@@ -14,6 +14,8 @@ from board import (
     filter_legal_moves
 )
 
+from minimax import minimax
+
 
 
 #TODOS:
@@ -116,6 +118,13 @@ def main():
                 f"No valid moves. Game ends in stalemate.", 
                ( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 
             )
+
+        #AI's turn
+        if next_move == Piece.BLACK:
+            pos, move = minimax(board)
+            board.move_piece(pos, move)
+            next_move = Piece.WHITE
+            continue
             
         for event in pygame.event.get():
             if event.type == QUIT:
