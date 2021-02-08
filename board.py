@@ -60,6 +60,7 @@ class Board:
             Piece.WHITE : False,
             Piece.BLACK : False
         }
+        self.moves = [] #Logs all moves played during the game 
         self.white_in_check = False
         self.black_in_check = False
         self.initialize()
@@ -160,6 +161,9 @@ class Board:
             self.checkmate[Piece.BLACK] = self.has_no_moves(Piece.BLACK)
         elif self.white_in_check and opponent == Piece.WHITE:
             self.checkmate[Piece.WHITE] = self.has_no_moves(Piece.WHITE)
+        # Add move to list of moves
+        move = (piece.color, (old_pos, new_pos))
+        self.moves.append(move)
 
 
     def get_piece(self, square):

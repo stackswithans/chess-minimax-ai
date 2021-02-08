@@ -83,6 +83,38 @@ def draw_user_guides(board, selected_piece, available_moves):
             get_square_center(board, *move),
             3,
         )
+def convert_to_chess_notation(old_pos, new_pos):
+    rows = {
+        0 : 5,
+        1 : 4,
+        2 : 3,
+        3 : 2,
+        4 : 1,
+    }
+    ranks = {}
+    for i, c in enumerate("abcde"):
+        ranks[i] = c
+
+    origin = ranks[old_pos[0]] + str(rows[old_pos[1]])
+    dest = ranks[new_pos[0]] + str(rows[new_pos[1]])
+    return f"{origin}{dest}"
+
+def save_game(board):
+    #Write moves to files
+    with open("black.txt", "w") as black_log, \
+         open("white.txt", "w") as white_log:
+        black_log.write("Start game\n")
+        white_log.write("Start game\n")
+        white_log.write("White\n")
+        black_log.write("Black\n")
+        for move in board.moves:
+            chess_not = convert_to_chess_notation(*move[1]) 
+            if move[0] == Piece.BLACK:
+                black_log.write(f"{chess_not}\n")
+                white_log.write(f"Black played {chess_not}\n")
+            else:
+                white_log.write(f"{chess_not}\n")
+                black_log.write(f"White played {chess_not}\n")
 
 def main():
     square_size = 80
@@ -123,17 +155,19 @@ def main():
 
         #AI's turn
         if next_move == Piece.BLACK:
-            pos, move = minimax(
+            current_pos, move = minimax(
                 board, maximizing=True, 
                 depth=0, max_depth=4 
             )
-            board.move_piece(pos, move)
+            board.move_piece(current_pos, move)
+            print(convert_to_chess_notation(current_pos, move))
             next_move = Piece.WHITE
             continue
             
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
+                save_game(board)
                 sys.exit()
 
             if event.type == MOUSEBUTTONDOWN:
@@ -163,6 +197,7 @@ def main():
         if player_moved:
             if pos in available_moves:
                 board.move_piece(selected_piece, pos)
+                print(convert_to_chess_notation(selected_piece, pos))
                 # Change turn
                 next_move = Piece.BLACK if next_move == Piece.WHITE\
                     else Piece.WHITE
@@ -171,6 +206,7 @@ def main():
 
         pos = None
         pygame.display.update()
+
 
 if __name__ == "__main__":
     main()
