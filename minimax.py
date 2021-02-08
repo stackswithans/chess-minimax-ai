@@ -1,4 +1,7 @@
-from board import get_legal_moves, filter_legal_moves
+from board import (
+    get_legal_moves, filter_legal_moves,
+    move_is_capture
+)
 from piece import Piece, PieceType
 import math
 
@@ -19,6 +22,21 @@ def calculate_material(board, pieces):
             continue
         material += points[piece_obj.ptype]
     return material
+
+#Sorts moves to improve the performance
+#of alpha beta prunnning
+def sort_moves(board, piece, moves):
+    priority = []
+    unimportant = []
+    for move in moves:
+        piece_obj = board.get_piece(piece)
+        other_piece = board.get_piece(move)
+        if move_is_capture(piece_obj, other_piece):
+            priority.append(move)
+            continue
+        unimportant.append(move)
+    return priority + unimportant
+
 
 
 #Calculates the optimal move for the 'bot'
@@ -50,45 +68,53 @@ def minimax(
         else:
             return opp_material - material
     #Calcular heurística para os estados filhos
-    values = []
+    operators = []
     for piece in pieces:
         moves = get_legal_moves(board, piece)
         moves = filter_legal_moves(board, piece, moves)
+        moves = sort_moves(board, piece, moves)
         for move in moves:
             piece_obj = board.get_piece(piece)
-            x, y = piece
-            x1, y1 = move
-            aux = board.get_piece(move)
-            board.board[y1][x1] = board.board[y][x]
-            board.board[y][x] = None
-            value = minimax(
-                board, not maximizing,
-                alpha, beta, 
-                depth + 1, max_depth
-            ) #Not my turn
-            #Revert board
-            board.board[y1][x1] = aux
-            board.board[y][x] = piece_obj
-            if depth == 0:
-                values.append((value, (piece, move)))
-            else:
-                if maximizing:
-                    alpha = max([alpha, value])
-                    if alpha >= beta: 
-                        return alpha
-                else:
-                    beta = min([beta, value])
-                    if beta <= alpha:
-                        return beta
+            operators.append((piece, move))
 
-                values.append(value)
+    max_min_value = float("-inf") if maximizing else float("inf")
+    cmp_func = max if maximizing else min
+    chosen_op = None
+    for operator in operators:
+        piece, move = operator
+        x, y = piece
+        x1, y1 = move
+        piece_obj = board.get_piece(piece)
+        aux = board.get_piece(move)
+        board.board[y1][x1] = board.board[y][x]
+        board.board[y][x] = None
+        value = minimax(
+            board, not maximizing,
+            alpha, beta, 
+            depth + 1, max_depth
+        ) #Not my turn
+        #Revert board
+        max_min_value = cmp_func([max_min_value, value])
+        board.board[y1][x1] = aux
+        board.board[y][x] = piece_obj
+        if depth == 0:
+            if max_min_value == value:
+                chosen_op = (value, (piece, move))
+        else:
+            if maximizing:
+                alpha = max([alpha, max_min_value])
+                if alpha >= beta: 
+                    break
+            else:
+                beta = min([beta, max_min_value])
+                if beta <= alpha:
+                    break
 
     #Return a move if we are at the root of the search tree
     if depth == 0:
-        result = max(values, key=lambda move: move[0])
         print(
-            "Chosen move:", result[1], "Heuristic value:", result[0]
+            "Chosen move:", chosen_op[1], "Heuristic value:", 
+            chosen_op[0]
         )
-        return result[1]
-    func = max if maximizing else min
-    return func(values)
+        return chosen_op[1]
+    return max_min_value
