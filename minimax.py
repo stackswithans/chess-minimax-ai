@@ -21,7 +21,9 @@ def calculate_material(board, pieces):
     return material
 
 
-def minimax_value(board, maximizing, depth, max_depth=3):
+#Calculates the optimal move for the 'bot'
+#using minimax
+def minimax(board, maximizing=True, depth=0, max_depth=3):
     color = Piece.BLACK if maximizing else Piece.WHITE
 
     pieces = board.get_pieces_by_color(color)
@@ -44,6 +46,7 @@ def minimax_value(board, maximizing, depth, max_depth=3):
             return material - opp_material
         else:
             return opp_material - material
+    #Calcular heurística para os estados filhos
     values = []
     for piece in pieces:
         moves = get_legal_moves(board, piece)
@@ -55,42 +58,23 @@ def minimax_value(board, maximizing, depth, max_depth=3):
             aux = board.get_piece(move)
             board.board[y1][x1] = board.board[y][x]
             board.board[y][x] = None
-            value = minimax_value(
+            value = minimax(
                 board, not maximizing, depth + 1, max_depth
-            )
-            values.append(value)
+            ) #Not my turn
             #Revert board
             board.board[y1][x1] = aux
             board.board[y][x] = piece_obj
-    #Return value
+            if depth == 0:
+                values.append((value, (piece, move)))
+            else:
+                values.append(value)
+
+    #Return a move if we are at the root of the search tree
+    if depth == 0:
+        result = max(values, key=lambda move: move[0])
+        print(
+            "Chosen move:", result[1], "Heuristic value:", result[0]
+        )
+        return result[1]
     func = max if maximizing else min
     return func(values)
-
-
-
-#Calculates the optimal move for the 'bot'
-#using minimax
-def minimax(board):
-    #Get all available moves
-    color = Piece.BLACK
-    pieces = board.get_pieces_by_color(color)
-    values = []
-    for piece in pieces:
-        moves = get_legal_moves(board, piece)
-        moves = filter_legal_moves(board, piece, moves)
-        for move in moves:
-            piece_obj = board.get_piece(piece)
-            x, y = piece
-            x1, y1 = move
-            aux = board.get_piece(move)
-            board.board[y1][x1] = board.board[y][x]
-            board.board[y][x] = None
-            value = minimax_value(board, False, 1) #Not my turn
-            #Revert board
-            board.board[y1][x1] = aux
-            board.board[y][x] = piece_obj
-            values.append((value, (piece, move)))
-
-    result = max(values, key=lambda move: move[0])
-    print("Chosen move:", result[1], "Heuristic value:", result[0])
-    return result[1]

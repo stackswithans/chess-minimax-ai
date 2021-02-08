@@ -121,7 +121,10 @@ def main():
 
         #AI's turn
         if next_move == Piece.BLACK:
-            pos, move = minimax(board)
+            pos, move = minimax(
+                board, maximizing=True, 
+                depth=0, max_depth=3 
+            )
             board.move_piece(pos, move)
             next_move = Piece.WHITE
             continue
