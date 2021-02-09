@@ -55,7 +55,7 @@ def minimax(
         return float("-inf") if maximizing else float("inf")
     elif no_moves:
         return 0
-    elif depth == max_depth:
+    if depth == max_depth:
         #If max depth has been reached, calculate board material
         opp_color = Piece.WHITE if color == Piece.BLACK\
             else Piece.BLACK
@@ -112,9 +112,5 @@ def minimax(
 
     #Return a move if we are at the root of the search tree
     if depth == 0:
-        print(
-            "Chosen move:", chosen_op[1], "Heuristic value:", 
-            chosen_op[0]
-        )
         return chosen_op[1]
     return max_min_value

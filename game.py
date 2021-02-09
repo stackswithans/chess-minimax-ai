@@ -1,5 +1,6 @@
 import sys
 import pygame
+import time
 from pygame.locals import (
     QUIT,
     MOUSEBUTTONDOWN
@@ -155,12 +156,14 @@ def main():
 
         #AI's turn
         if next_move == Piece.BLACK:
-            current_pos, move = minimax(
+
+            t1 = time.time()
+            choice = minimax(
                 board, maximizing=True, 
-                depth=0, max_depth=4 
+                depth=0, max_depth=4
             )
+            current_pos, move = choice
             board.move_piece(current_pos, move)
-            print(convert_to_chess_notation(current_pos, move))
             next_move = Piece.WHITE
             continue
             
@@ -197,7 +200,6 @@ def main():
         if player_moved:
             if pos in available_moves:
                 board.move_piece(selected_piece, pos)
-                print(convert_to_chess_notation(selected_piece, pos))
                 # Change turn
                 next_move = Piece.BLACK if next_move == Piece.WHITE\
                     else Piece.WHITE
