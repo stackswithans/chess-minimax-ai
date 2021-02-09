@@ -1,34 +1,17 @@
 Start game
 White
-a2a3
-Black played e4e3
-d2e3
-Black played d4e3
-c1e3
-Black played d5d1
-e1d1
-Black played e5d5
-e3c5
-Black played d5c5
-e2e3
+d2d3
+Black played e4d3
+e2d3
+Black played c4d3
+c2d3
+Black played d5a2
+a1a2
 Black played b4b3
-e3e4
-Black played b3c2
-d1c2
-Black played b5d4
-c2d2
-Black played d4b3
-d2e1
-Black played b3a1
-e4e5
-Black played c5d4
-b1d2
-Black played a5d5
-d2c4
-Black played d4c4
-e1e2
-Black played a1c2
-b2b3
-Black played c4c3
-b3a4
-Black played d5d2
+d1e2
+Black played e5d5
+c1e3
+Black played b3a2
+e3d4
+Black played a2b1
+e2e5

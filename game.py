@@ -136,12 +136,14 @@ def main():
     selected_piece = None
     #Player moved piece
     player_moved = False
+    game_over = False
     while True:
         SCREEN.fill(BG_COLOR)
         board.draw(SCREEN)
 
         #Check if player is mated
-        if board.checkmate.get(next_move):
+        if board.checkmate.get(Piece.WHITE) or \
+            board.checkmate.get(Piece.BLACK):
             winner = Piece.BLACK if next_move == Piece.WHITE\
                 else Piece.WHITE
             show_end_screen(f"{winner.capitalize()} has won.", 
@@ -155,9 +157,9 @@ def main():
             )
 
         #AI's turn
-        if next_move == Piece.BLACK:
+        if next_move == Piece.BLACK and \
+            not board.checkmate.get(Piece.BLACK):
 
-            t1 = time.time()
             choice = minimax(
                 board, maximizing=True, 
                 depth=0, max_depth=4
